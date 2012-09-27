@@ -8,7 +8,10 @@ Stable tag: 4.3
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
-This plugin hides the normal login and places a single click lock in the right hand corner.
+This plugin hides the normal login and places a single click lock in the right hand corner or a "The Net" (With Sandra Bullock) style pi symbol in the bottom right.
+Alternatively, there can also be nothing to click, and a key combination of Crtl/Alt+L (by default) can be used to bring up the login bar.
+
+The login bar brought up by the plugin takes up the same space as the normal wordpress Admin Bar.
 
 == Description == 
 
@@ -32,13 +35,13 @@ Secure Hidden Login allows you to have hidden login on your site.
 
 == Frequently Asked Questions ==
 
-= A question that someone might have =
+= I'm getting cannot write/read to .htaccess errors =
 
-An answer to that question.
+If enabling the option to lokck out wp-login.php and wp-admin you will need to make sure the plugin can write to your .htaccess file.  You can change permissions on the file temporarily to do this if needed.
 
-= What about foo bar? =
+= Can I change the color of the 'Login' and 'Forgot Password' buttons? =
 
-Answer to foo bar dilemma.
+Not yet, this will come in a new version soon.
 
 
 == Screenshots ==
