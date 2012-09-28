@@ -1,9 +1,9 @@
 <?php
 /*
 Plugin Name: Secure Hidden Login
-Plugin URI: http://apexad.net
-Description: This plugin hides the normal login and replaces it with a more secure on the page login.
-Version: 0.1
+Plugin URI: http://apexad.net/category/wordpress-plugins/
+Description: Hide the normal login and use a lock icon in the upper right or a "The Net" style pi symbol in the bottom right.
+Version: 0.1.1
 Author: apexad
 Author URI: http://apexad.net
 License: GPL2
@@ -59,6 +59,7 @@ function securehiddenlogin_footer() {
 			case 'hidden':
 				echo 'hidden">';
 		}
+		echo '<script type="text/javascript">'."if(typeof jQuery == 'undefined') { document.write('".'<a href="/wp-admin/" title="jQuery not enabled">x</a>'."'); }".'</script></div>';
 	}
 }
 
@@ -134,11 +135,63 @@ echo ' />'.$display_style['label'].'<br/>';
 	<?php
 }
 
+function remove_htaccess() {
+		//delete from .htaccess file
+		$main_htaccess = fopen(ABSPATH.'.htaccess','r') or die("can't read your .htaccess file");
+		$new_main_htacces_contents = "";
+    		while (($buffer = fgets($main_htaccess, 4096)) !== false) {
+			if ((substr($buffer,0,20) == "# BEGIN Secure Login") || ($remove_line === true)) {
+				$remove_line = true;
+			}
+			else { $new_main_htaccess_contents .= $previous_buffer; }
+			if (substr($previous_buffer,0,18) == "# END Secure Login") {
+				$new_main_htaccess_contents .= $buffer;
+				$remove_line = false;
+			}
+			$previous_buffer = $buffer;
+    		}
+    		if (!feof($main_htaccess)) {
+        		echo "Error: unexpected fgets() fail\n";
+    		}
+fclose($main_htaccess);
+$main_htaccess = fopen(ABSPATH.'.htaccess','w+') or die("can't read your .htaccess file");
+fwrite($main_htaccess,$new_main_htaccess_contents);
+    		fclose($main_htaccess);
+
+$admin_htaccess = fopen(ABSPATH.'wp-admin/.htaccess','r') or die("can't read your wp-admin .htaccess file");
+		$new_main_htacces_contents = "";
+    		while (($buffer = fgets($admin_htaccess, 4096)) !== false) {
+			if ((substr($buffer,0,20) == "# BEGIN Secure Login") || ($remove_line === true)) {
+				$remove_line = true;
+			}
+			else { $new_admin_htaccess_contents .= $previous_buffer; }
+			if (substr($previous_buffer,0,18) == "# END Secure Login") {
+				$new_admin_htaccess_contents .= $buffer;
+				$remove_line = false;
+			}
+
+			$previous_buffer = $buffer;
+    		}
+    		if (!feof($admin_htaccess)) {
+        		echo "Error: unexpected fgets() fail\n";
+    		}
+fclose($main_htaccess);
+//now delete from wp-admin .htaccess
+$previous_buffer = '';
+$buffer = '';
+$admin_htaccess = fopen(ABSPATH.'wp-admin/.htaccess','w+') or die("can't read your wp-admin .htaccess file");
+fwrite($admin_htaccess,$new_admin_htaccess_contents);
+    		fclose($admin_htaccess);
+}
+
 // Sanitize and validate input. Accepts an array, return a sanitized array.
 function securehiddenlogin_options_validate($input) {
 	$input['loginbartext'] =  wp_filter_nohtml_kses($input['loginbartext']);
+
+	remove_htaccess(); //first clean up the .htaaccess files
+
 	if ($input['htaccessblock'] == 'on') {
-		//write to .htaccess files
+		//write to .htaccess files if they turned that option on
 		$main_domain = $domain = str_ireplace('www.', '', parse_url(home_url(), PHP_URL_HOST));
 		$main_htaccess_content = <<<MAINHTACCESS
 
@@ -166,55 +219,12 @@ ADMINHTACCESS;
 		fwrite($admin_htaccess,$admin_htaccess_content);
 		fclose($admin_htaccess);
 	}
-	else {
-		//delete from .htaccess file
-		$main_htaccess = fopen(ABSPATH.'.htaccess','r') or die("can't read your .htaccess file");
-		$new_main_htacces_contents = "";
-    		while (($buffer = fgets($main_htaccess, 4096)) !== false) {
-			if ((substr($buffer,0,20) == "# BEGIN Secure Login") || ($remove_line === true)) {
-				$remove_line = true;
-			}
-			else { $new_main_htaccess_contents .= $previous_buffer; }
-			if (substr($previous_buffer,0,18) == "# END Secure Login") {
-				$new_main_htaccess_contents .= $buffer;
-				$remove_line = false;
-			}
-			
-			$previous_buffer = $buffer;
-    		}
-    		if (!feof($main_htaccess)) {
-        		echo "Error: unexpected fgets() fail\n";
-    		}
-fclose($main_htaccess);
-$main_htaccess = fopen(ABSPATH.'.htaccess','w+') or die("can't read your .htaccess file");
-fwrite($main_htaccess,$new_main_htaccess_contents);
-    		fclose($main_htaccess);
-
-$admin_htaccess = fopen(ABSPATH.'wp-admin/.htaccess','r') or die("can't read your wp-admin .htaccess file");
-		$new_main_htacces_contents = "";
-    		while (($buffer = fgets($admin_htaccess, 4096)) !== false) {
-			if ((substr($buffer,0,20) == "# BEGIN Secure Login") || ($remove_line === true)) {
-				$remove_line = true;
-			}
-			else { $new_admin_htaccess_contents .= $previous_buffer; }
-			if (substr($previous_buffer,0,18) == "# END Secure Login") {
-				$new_admin_htaccess_contents .= $buffer;
-				$remove_line = false;
-			}
-			
-			$previous_buffer = $buffer;
-    		}
-    		if (!feof($admin_htaccess)) {
-        		echo "Error: unexpected fgets() fail\n";
-    		}
-fclose($main_htaccess);
-//now delete from wp-admin .htaccess
-$previous_buffer = '';
-$buffer = '';
-$admin_htaccess = fopen(ABSPATH.'wp-admin/.htaccess','w+') or die("can't read your wp-admin .htaccess file");
-fwrite($admin_htaccess,$new_admin_htaccess_contents);
-    		fclose($admin_htaccess);
-	}
 	return $input;
 }
+
+function securehiddenlogin_deactivation() {
+	remove_htaccess();
+}
+
+register_deactivation_hook(__FILE__, 'securehiddenlogin_deactivation');
 ?>
