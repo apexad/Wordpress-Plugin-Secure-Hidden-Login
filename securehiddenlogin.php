@@ -3,7 +3,7 @@
 Plugin Name: Secure Hidden Login
 Plugin URI: http://apexad.net/category/wordpress-plugins/
 Description: Hide the normal login and use a lock icon in the upper right or a "The Net" style pi symbol in the bottom right.
-Version: 0.1.1
+Version: 0.2
 Author: apexad
 Author URI: http://apexad.net
 License: GPL2
