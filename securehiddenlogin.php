@@ -34,11 +34,13 @@ function securehiddenlogin_css() {
 	wp_enqueue_script('jquery');
 	wp_enqueue_script('securehiddenlogin_jsfile');
 	$options = get_option('securehiddenlogin');
+	if (!array_key_exists('button_color',$options)) { $options['button_color'] = 'green'; }
 	if (ord(strtolower($options['triggerchar'])) == 0) { $options['triggerchar']='l'; /* set default value*/ }
 	$js_data = array(
 		'site_url' => site_url(),
 		'home_url' => home_url(),
-		'login_keys' => '['.ord(strtolower($options['triggerchar'])).']['.ord(strtoupper($options['triggerchar'])).']'
+		'login_keys' => '['.ord(strtolower($options['triggerchar'])).']['.ord(strtoupper($options['triggerchar'])).']',
+		'color' => $options['button_color']
 );
 	wp_localize_script('securehiddenlogin_jsfile','wordpress_info',$js_data);
 }
@@ -76,9 +78,9 @@ function securehiddenlogin_options_init(){
 function securehiddenlogin_options_add_page() {
 	add_options_page('Secure Hidden Login Settings', 'Secure Hidden Login', 'manage_options', 'securehiddenlogin_options', 'securehiddenlogin_options_do_page');
 }
-
 // Draw the menu page itself
 function securehiddenlogin_options_do_page() {
+
 $display_style_values = array(
 	array(
 		'value' => 'editsee',
@@ -92,6 +94,18 @@ $display_style_values = array(
 		'value' => 'hidden',
 		'label' => 'Hidden (Ctrl/Alt+Trigger Login Bar Character Setup Below)'
 	)
+);
+
+$button_color_values = array(
+	'black',
+	'gray',
+	'white',
+	'orange',
+	'red',
+	'blue',
+	'rosy',
+	'green',
+	'pink'
 );
 	?>
 	<div class="wrap">
@@ -111,6 +125,22 @@ echo ' />'.$display_style['label'].'<br/>';
 }
 ?>
 					</td>
+				</tr>
+				<tr valign="top"><th scope="row">Button Color</th>
+					<td>
+<style type="text/css">
+@import url('<?php echo site_url().'/wp-content/plugins/secure-hidden-login/style.css'; ?>');
+</style>
+<div id="securehiddenloginform">
+<?php foreach($button_color_values as $button_color) {
+echo '<input type="radio" name="securehiddenlogin[button_color]" id="'.$button_color.'" value="'.$button_color.'"';
+if ($options['button_color'] == $button_color) {
+	echo ' checked="checked"';
+}
+echo ' /><input type="button" class="'.$button_color.'" value="'.ucwords($button_color).'" onclick="document.getElementById(\''.$button_color.'\').checked=true" /><br/>';
+}
+?>
+					</div></td>
 				</tr>
 				<tr valign="top"><th scope="row">Trigger Login Bar Character</th>
 					<?php if ($options['triggerchar'] == '') { $options['triggerchar']  = 'L'; /* default  */ } ?>
@@ -140,9 +170,11 @@ function remove_htaccess() {
 		$main_htaccess = fopen(ABSPATH.'.htaccess','r') or die("can't read your .htaccess file");
 		$new_main_htacces_contents = "";
     		while (($buffer = fgets($main_htaccess, 4096)) !== false) {
-			if ((substr($buffer,0,20) == "# BEGIN Secure Login") || ($remove_line === true)) {
+			if (substr($buffer,0,20) == "# BEGIN Secure Login") {
 				$remove_line = true;
+				$new_main_htaccess_contents .= $previous_buffer;
 			}
+			if ($remove_line === true) { /* do nothing */ }
 			else { $new_main_htaccess_contents .= $previous_buffer; }
 			if (substr($previous_buffer,0,18) == "# END Secure Login") {
 				$new_main_htaccess_contents .= $buffer;
@@ -150,6 +182,10 @@ function remove_htaccess() {
 			}
 			$previous_buffer = $buffer;
     		}
+		if (substr($previous_buffer,0,18) != "# END Secure Login") {
+			$new_main_htaccess_contents .= $previous_buffer;
+		}
+
     		if (!feof($main_htaccess)) {
         		echo "Error: unexpected fgets() fail\n";
     		}
@@ -158,12 +194,16 @@ $main_htaccess = fopen(ABSPATH.'.htaccess','w+') or die("can't read your .htacce
 fwrite($main_htaccess,$new_main_htaccess_contents);
     		fclose($main_htaccess);
 
+$previous_buffer = '';
 $admin_htaccess = fopen(ABSPATH.'wp-admin/.htaccess','r') or die("can't read your wp-admin .htaccess file");
 		$new_main_htacces_contents = "";
     		while (($buffer = fgets($admin_htaccess, 4096)) !== false) {
-			if ((substr($buffer,0,20) == "# BEGIN Secure Login") || ($remove_line === true)) {
+			if (substr($buffer,0,20) == "# BEGIN Secure Login") {
 				$remove_line = true;
+				$new_admin_htaccess_contents .= $previous_buffer;
 			}
+
+			if ($remove_line === true) { /* do nothing */ }
 			else { $new_admin_htaccess_contents .= $previous_buffer; }
 			if (substr($previous_buffer,0,18) == "# END Secure Login") {
 				$new_admin_htaccess_contents .= $buffer;
@@ -172,6 +212,9 @@ $admin_htaccess = fopen(ABSPATH.'wp-admin/.htaccess','r') or die("can't read you
 
 			$previous_buffer = $buffer;
     		}
+		if (substr($previous_buffer,0,18) != "# END Secure Login") {
+			$new_admin_htaccess_contents .= $previous_buffer;
+		}
     		if (!feof($admin_htaccess)) {
         		echo "Error: unexpected fgets() fail\n";
     		}

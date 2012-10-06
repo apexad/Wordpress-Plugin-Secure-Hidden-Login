@@ -4,7 +4,7 @@ Donate link: http://apexad.net/category/wordpress-plugins/
 Tags: secure, hidden, login, single click, lock, the net, sandra bullock
 Requires at least: 3.4
 Tested up to: 3.4.2
-Stable tag: 0.1.1
+Stable tag: 0.2
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -45,11 +45,23 @@ Your active theme may have an issue loading jquery.  I'm looking into a better f
 
 You can directly edit the style.css file, but there will be options for this in a new version soon.
 
+= Somehow I've locked myself out of my Wordpress Admin, what do I do? =
+
+You can upload an 'Emergency' Login page: 
+&lt;html&gt;
+&lt;head&gt;&lt;title&gt;Emergency Login&lt;/title&gt;&lt;/head&gt;
+&lt;body&gt;&lt;a href="./wp-admin"&gt;Admin Page&lt;/a&gt;&lt;/body&gt;
+&lt;/html&gt;
+
 == Screenshots ==
 
 No Screenshots
 
 == Changelog ==
+
+= 0.2 =
+* Fixed some issues with the addition/removal of the .htaccess wp-admin/wp-login.php block code
+* You can now change the color of the buttons
 
 = 0.1.1 =
 * upon deactivation, the plugin now automatically cleans up .htaccess files
