@@ -34,7 +34,7 @@ function securehiddenlogin_css() {
 	wp_enqueue_script('jquery');
 	wp_enqueue_script('securehiddenlogin_jsfile');
 	$options = get_option('securehiddenlogin');
-	if (!array_key_exists('button_color',$options)) { $options['button_color'] = 'green'; }
+	if (!@array_key_exists('button_color',$options)) { $options['button_color'] = 'green'; }
 	if (ord(strtolower($options['triggerchar'])) == 0) { $options['triggerchar']='l'; /* set default value*/ }
 	$js_data = array(
 		'site_url' => site_url(),
