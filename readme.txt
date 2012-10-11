@@ -4,22 +4,24 @@ Donate link: http://apexad.net/category/wordpress-plugins/
 Tags: secure, hidden, login, single click, lock, the net, sandra bullock
 Requires at least: 3.4
 Tested up to: 3.4.2
-Stable tag: 0.2
+Stable tag: 0.3
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
-Hide the normal login and use a lock icon in the upper right or a "The Net" style pi symbol in the bottom right.
+Hide the normal login and activate with a key combination, (upper right) lock icon or (bottom right) "The Net" (Sandra Bullock) style pi symbol.
 
 == Description == 
 
 Secure Hidden Login allows you to have hidden a login bar (same size as the default Wordpress admin bar) on your site.
 
-* Active with a Lock in the upper right
-* Activate with a 'pi' symbol like "The Net" (with Sandra Bullock) in the bottom right
-* (In addition to either of the other options) Activate with Ctrl/Alt+L (the 'L' can be changed in Settings)
+* Active it with a Lock in the upper right
+* Activate it with a 'pi' symbol like "The Net" (with Sandra Bullock) in the bottom right
+* Completely Hidden and only activated with Ctrl/Alt+L (the 'L' can be changed in Settings)
 
-* Good for Security
-* Makes Wordpress easier and quicker to use
+Why you should use this plugin:
+
+* Great for Security
+* Makes Wordpress easier and quicker (no need to go to a different page to login)
 * Option to block direct wp-login.php and wp-admin login (uses .htaccess file)
 
 
@@ -32,10 +34,6 @@ Secure Hidden Login allows you to have hidden a login bar (same size as the defa
 
 
 == Frequently Asked Questions ==
-
-= I'm getting cannot write/read to .htaccess errors =
-
-If enabling/disabling the option to "Block wp-admin and wp-login.php you will need to make sure the plugin can write to your .htaccess file (in both the wordpress root directory and the wp-admin directory).  You can change permissions on the file temporarily to do this if needed.
 
 = When I click the lock it just goes to the wordpress admin login page, why don't I get the login bar? =
 
@@ -58,6 +56,15 @@ You can upload an 'Emergency' Login page:
 No Screenshots
 
 == Changelog ==
+
+= 0.3 =
+
+* Fixed an issue with a PHP Warning coming up if Settings were not yet saved.
+* Updated plugin description and information
+* No longer using a .htaccess file in wp-admin (removed FAQ question relating to this)
+* Cleaned up error messages relating to reading/writing to main .htaccess file
+* Added a 'Redirect to Home page on Logout' option to further hide normal wordpress login
+* Other minor code cleaning up and bugfixes
 
 = 0.2 =
 * Fixed some issues with the addition/removal of the .htaccess wp-admin/wp-login.php block code

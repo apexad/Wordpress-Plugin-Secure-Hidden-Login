@@ -2,8 +2,8 @@
 /*
 Plugin Name: Secure Hidden Login
 Plugin URI: http://apexad.net/category/wordpress-plugins/
-Description: Hide the normal login and use a lock icon in the upper right or a "The Net" style pi symbol in the bottom right.
-Version: 0.2
+Description: Hide the normal login and activate with a key combination, (upper right) lock icon or (bottom right) "The Net" (Sandra Bullock) style pi symbol.
+Version: 0.3
 Author: apexad
 Author URI: http://apexad.net
 License: GPL2
@@ -149,55 +149,61 @@ echo ' /><input type="button" class="'.$button_color.'" value="'.ucwords($button
 				<tr><th scope="row">Block wp-admin & wp-login.php</th>
 					<td><input type="checkbox" name="securehiddenlogin[htaccessblock]" <?php if ($options['htaccessblock'] == 'on') { echo 'checked="checked"'; } ?> /> <span style="color:red;">Warning:</span> Be sure to disable this option when uninstalling the plugin.</span></td>
 				</tr>
+				<tr><th scope="row">Redirect to Home page on Logout</th>
+					<td><input type="checkbox" name="securehiddenlogin[homepage_on_logout]" <?php if ($options['homepage_on_logout'] == 'on') { echo 'checked="checked"'; } ?> /> </td>
+				</tr>
 
 			</table>
 			<?php submit_button(); ?>
-		</form>
-<p>If you like this plugin, please consider donating to the author.  Thank you!</p>
-<form action="https://www.paypal.com/cgi-bin/webscr" method="post">
-<input type="hidden" name="cmd" value="_s-xclick">
-<input type="hidden" name="hosted_button_id" value="HA6QM8DEYCN3U">
-<input type="image" src="https://www.paypalobjects.com/en_US/i/btn/btn_donate_LG.gif" border="0" name="submit" alt="PayPal - The safer, easier way to pay online!">
-<img alt="" border="0" src="https://www.paypalobjects.com/en_US/i/scr/pixel.gif" width="1" height="1">
-</form>
+	</form>
+	<p>If you like this plugin, please consider donating to the author.  Thank you!</p>
+	<form action="https://www.paypal.com/cgi-bin/webscr" method="post">
+	<input type="hidden" name="cmd" value="_s-xclick">
+	<input type="hidden" name="hosted_button_id" value="HA6QM8DEYCN3U">
+	<input type="image" src="https://www.paypalobjects.com/en_US/i/btn/btn_donate_LG.gif" border="0" name="submit" alt="PayPal - The safer, easier way to pay online!">
+	<img alt="" border="0" src="https://www.paypalobjects.com/en_US/i/scr/pixel.gif" width="1" height="1">
+	</form>
 
 	</div>
 	<?php
 }
 
 function remove_htaccess() {
-		//delete from .htaccess file
-		$main_htaccess = fopen(ABSPATH.'.htaccess','r') or die("can't read your .htaccess file");
-		$new_main_htacces_contents = "";
-    		while (($buffer = fgets($main_htaccess, 4096)) !== false) {
-			if (substr($buffer,0,20) == "# BEGIN Secure Login") {
-				$remove_line = true;
-				$new_main_htaccess_contents .= $previous_buffer;
-			}
-			if ($remove_line === true) { /* do nothing */ }
-			else { $new_main_htaccess_contents .= $previous_buffer; }
-			if (substr($previous_buffer,0,18) == "# END Secure Login") {
-				$new_main_htaccess_contents .= $buffer;
-				$remove_line = false;
-			}
-			$previous_buffer = $buffer;
-    		}
-		if (substr($previous_buffer,0,18) != "# END Secure Login") {
+	//delete from main .htaccess file
+	$main_htaccess = @fopen(ABSPATH.'.htaccess','r') or die("Error: Can't read your .htaccess file (make sure the file exists)");
+	$new_main_htacces_contents = "";
+
+    	while (($buffer = fgets($main_htaccess, 4096)) !== false) {
+		if (substr($buffer,0,20) == "# BEGIN Secure Login") {
+			$remove_line = true;
 			$new_main_htaccess_contents .= $previous_buffer;
 		}
+		if ($remove_line === true) { /* do nothing */ }
+		else { $new_main_htaccess_contents .= $previous_buffer; }
+		if (substr($previous_buffer,0,18) == "# END Secure Login") {
+			$new_main_htaccess_contents .= $buffer;
+			$remove_line = false;
+		}
+		$previous_buffer = $buffer;
+	}
+	if (substr($previous_buffer,0,18) != "# END Secure Login") {
+		$new_main_htaccess_contents .= $previous_buffer;
+	}
 
-    		if (!feof($main_htaccess)) {
-        		echo "Error: unexpected fgets() fail\n";
-    		}
-fclose($main_htaccess);
-$main_htaccess = fopen(ABSPATH.'.htaccess','w+') or die("can't read your .htaccess file");
-fwrite($main_htaccess,$new_main_htaccess_contents);
-    		fclose($main_htaccess);
+	if (!feof($main_htaccess)) {
+       		echo "Error: Could not read full .htaccess file (make sure the file is writable)";
+	}
+	fclose($main_htaccess);
 
-$previous_buffer = '';
-$admin_htaccess = fopen(ABSPATH.'wp-admin/.htaccess','r') or die("can't read your wp-admin .htaccess file");
-		$new_main_htacces_contents = "";
-    		while (($buffer = fgets($admin_htaccess, 4096)) !== false) {
+	$main_htaccess = @fopen(ABSPATH.'.htaccess','w+') or die("Error: Can't read your .htaccess file (make sure the file exists)");
+	fwrite($main_htaccess,trim($new_main_htaccess_contents));
+	fclose($main_htaccess);
+
+	/* legacy admin .htaccess removal */
+	if (file_exists(ABSPATH.'wp-admin/.htaccess')) {
+		$admin_htaccess = fopen(ABSPATH.'wp-admin/.htaccess','r') or die("Error: Can't read your wp-admin .htaccess file");
+		$new_admin_htacces_contents = "";
+		while (($buffer = fgets($admin_htaccess, 4096)) !== false) {
 			if (substr($buffer,0,20) == "# BEGIN Secure Login") {
 				$remove_line = true;
 				$new_admin_htaccess_contents .= $previous_buffer;
@@ -211,20 +217,22 @@ $admin_htaccess = fopen(ABSPATH.'wp-admin/.htaccess','r') or die("can't read you
 			}
 
 			$previous_buffer = $buffer;
-    		}
+		}
 		if (substr($previous_buffer,0,18) != "# END Secure Login") {
 			$new_admin_htaccess_contents .= $previous_buffer;
 		}
-    		if (!feof($admin_htaccess)) {
-        		echo "Error: unexpected fgets() fail\n";
-    		}
-fclose($main_htaccess);
-//now delete from wp-admin .htaccess
-$previous_buffer = '';
-$buffer = '';
-$admin_htaccess = fopen(ABSPATH.'wp-admin/.htaccess','w+') or die("can't read your wp-admin .htaccess file");
-fwrite($admin_htaccess,$new_admin_htaccess_contents);
-    		fclose($admin_htaccess);
+		if (!feof($admin_htaccess)) {
+			echo "Error: Could not read full wp-admin .htaccess file";
+		}
+		fclose($admin_htaccess);
+
+		//now delete from wp-admin .htaccess
+		$previous_buffer = '';
+		$buffer = '';
+		$admin_htaccess = fopen(ABSPATH.'wp-admin/.htaccess','w+') or die("Error: Can't write your wp-admin .htaccess file (make sure the file exists)");
+		fwrite($admin_htaccess,trim($new_admin_htaccess_contents));
+		fclose($admin_htaccess);
+	}
 }
 
 // Sanitize and validate input. Accepts an array, return a sanitized array.
@@ -246,21 +254,9 @@ RewriteRule .* - [F]
 </FilesMatch>
 # END Secure Login
 MAINHTACCESS;
-		$admin_htaccess_content = <<< ADMINHTACCESS
-
-# BEGIN Secure Login
-RewriteEngine On
-RewriteCond %{HTTP_REFERER} !^http(s)?://(www.)?$main_domain [NC]
-RewriteRule .* - [F]
-# END Secure Login
-ADMINHTACCESS;
-		$main_htaccess = fopen(ABSPATH.'.htaccess','a+') or die("can't write to your .htaccess file");
+		$main_htaccess = @fopen(ABSPATH.'.htaccess','a+') or die("Errot: Can't write to your .htaccess file (make sure the file is writable)");
 		fwrite($main_htaccess,$main_htaccess_content);
 		fclose($main_htaccess);
-
-		$admin_htaccess = fopen(ABSPATH.'wp-admin/.htaccess','a+') or die("can't write to your wp-admin .htaccess file");
-		fwrite($admin_htaccess,$admin_htaccess_content);
-		fclose($admin_htaccess);
 	}
 	return $input;
 }
@@ -270,4 +266,12 @@ function securehiddenlogin_deactivation() {
 }
 
 register_deactivation_hook(__FILE__, 'securehiddenlogin_deactivation');
+
+function securehiddenlogin_logoutredirect() { 
+	$options = get_option('securehiddenlogin');
+	if (($_REQUEST['loggedout'] == 'true') && ($options['homepage_on_logout'] == 'on')) {
+		echo '<script type="text/javascript"> location.href="'.home_url().'"; </script>';
+	}
+}
+add_action( 'login_enqueue_scripts', 'securehiddenlogin_logoutredirect' );
 ?>
