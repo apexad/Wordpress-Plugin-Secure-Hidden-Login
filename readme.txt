@@ -41,7 +41,8 @@ Your active theme may have an issue loading jquery.  I'm looking into a better f
 
 = Can I change the color of the 'Login' and 'Forgot Password' buttons? =
 
-You can directly edit the style.css file, but there will be options for this in a new version soon.
+You can! There is 9 different colors to choose from (both buttons will be the same color.)
+Button Colors are done via CSS, so if you know what you're doing you can get 2 different color buttons.  If there is demand for it, I'll work on this in a new version.
 
 = Somehow I've locked myself out of my Wordpress Admin, what do I do? =
 
