@@ -3,7 +3,7 @@
 Plugin Name: Secure Hidden Login
 Plugin URI: http://apexad.net/category/wordpress-plugins/
 Description: Hide the normal login and activate with a key combination, (upper right) lock icon or (bottom right) "The Net" (Sandra Bullock) style pi symbol.
-Version: 0.3
+Version: 0.5
 Author: apexad
 Author URI: http://apexad.net
 License: GPL2
@@ -34,13 +34,19 @@ function securehiddenlogin_css() {
 	wp_enqueue_script('jquery');
 	wp_enqueue_script('securehiddenlogin_jsfile');
 	$options = get_option('securehiddenlogin');
-	if (!@array_key_exists('button_color',$options)) { $options['button_color'] = 'green'; }
+	if (!@array_key_exists('button_color',$options)) { 
+		$options['button_color'] = 'green';
+	}
+	if (!@array_key_exists('button_colorfp',$options)) { 
+		$options['button_colorfp'] = 'green';
+	}
 	if (ord(strtolower($options['triggerchar'])) == 0) { $options['triggerchar']='l'; /* set default value*/ }
 	$js_data = array(
 		'site_url' => site_url(),
 		'home_url' => home_url(),
 		'login_keys' => '['.ord(strtolower($options['triggerchar'])).']['.ord(strtoupper($options['triggerchar'])).']',
-		'color' => $options['button_color']
+		'colorli' => $options['button_color'],
+		'colorfp' => $options['button_colorfp']
 );
 	wp_localize_script('securehiddenlogin_jsfile','wordpress_info',$js_data);
 }
@@ -55,8 +61,14 @@ function securehiddenlogin_footer() {
 			case 'editsee':
 				echo 'editsee">';
 			break;
+			case 'wordpress_icon':
+				echo 'wordpress_icon"><div class="icon"></div>';
+			break;
 			case 'the_net':
 				echo 'the_net">&pi;';
+			break;
+			case 'login_text':
+				echo 'login_text">&nbsp;&nbsp;LOGIN&nbsp;&nbsp;';
 			break;
 			case 'hidden':
 				echo 'hidden">';
@@ -87,8 +99,16 @@ $display_style_values = array(
 		'label' => 'Right Side Lock'
 	),
 	array(
+		'value' => 'wordpress_icon',
+		'label' => 'Left Side Wordpress Icon'
+	),
+	array(
 		'value' => 'the_net',
 		'label' => '<em>The Net</em> (With Sandra Bullock)'
+	),
+	array(
+		'value' => 'login_text',
+		'label' => 'Simple LOGIN button'
 	),
 	array(
 		'value' => 'hidden',
@@ -102,14 +122,15 @@ $button_color_values = array(
 	'white',
 	'orange',
 	'red',
+	'green',
+	'yellow',
 	'blue',
 	'rosy',
-	'green',
 	'pink'
 );
 	?>
 	<div class="wrap">
-		<h2>Secure Hidden Login Options</h2>
+		<h2>Secure Hidden Login Settings</h2>
 		<form method="post" action="options.php">
 			<?php settings_fields('securehiddenlogin_options_options'); ?>
 			<?php $options = get_option('securehiddenlogin'); ?>
@@ -132,6 +153,7 @@ echo ' />'.$display_style['label'].'<br/>';
 @import url('<?php echo site_url().'/wp-content/plugins/secure-hidden-login/style.css'; ?>');
 </style>
 <div id="securehiddenloginform">
+<table><tr><th>Login Button</th><th>Forgot Password</th></tr><tr><td>
 <?php foreach($button_color_values as $button_color) {
 echo '<input type="radio" name="securehiddenlogin[button_color]" id="'.$button_color.'" value="'.$button_color.'"';
 if ($options['button_color'] == $button_color) {
@@ -140,14 +162,24 @@ if ($options['button_color'] == $button_color) {
 echo ' /><input type="button" class="'.$button_color.'" value="'.ucwords($button_color).'" onclick="document.getElementById(\''.$button_color.'\').checked=true" /><br/>';
 }
 ?>
-					</div></td>
+					</td><td>
+<?php foreach($button_color_values as $button_color) {
+echo '<input type="radio" name="securehiddenlogin[button_colorfp]" id="'.$button_color.'fp" value="'.$button_color.'"';
+if ($options['button_colorfp'] == $button_color) {
+	echo ' checked="checked"';
+}
+echo ' /><input type="button" class="'.$button_color.'" value="'.ucwords($button_color).'" onclick="document.getElementById(\''.$button_color.'fp\').checked=true" /><br/>';
+}
+?>
+</tr></table></div></td>
 				</tr>
 				<tr valign="top"><th scope="row">Trigger Login Bar Character</th>
 					<?php if ($options['triggerchar'] == '') { $options['triggerchar']  = 'L'; /* default  */ } ?>
 					<td>Ctrl/Alt+<input type="text" name="securehiddenlogin[triggerchar]" value="<?php echo $options['triggerchar']; ?>" size="1" maxlength="1" /></td>
 				</tr>
-				<tr><th scope="row">Block wp-admin & wp-login.php</th>
-					<td><input type="checkbox" name="securehiddenlogin[htaccessblock]" <?php if ($options['htaccessblock'] == 'on') { echo 'checked="checked"'; } ?> /> <span style="color:red;">Warning:</span> Be sure to disable this option when uninstalling the plugin.</span></td>
+				<tr><th scope="row">Block wp-login.php</th>
+					<td><input type="checkbox" name="securehiddenlogin[htaccessblock]" <?php if ($options['htaccessblock'] == 'on') { echo 'checked="checked"'; } ?> />
+					<span style="color:red;">Warning:</span> Be sure to disable this option when uninstalling the plugin.</td>
 				</tr>
 				<tr><th scope="row">Redirect to Home page on Logout</th>
 					<td><input type="checkbox" name="securehiddenlogin[homepage_on_logout]" <?php if ($options['homepage_on_logout'] == 'on') { echo 'checked="checked"'; } ?> /> </td>
