@@ -3,7 +3,7 @@
 Plugin Name: Secure Hidden Login
 Plugin URI: http://apexad.net/category/wordpress-plugins/
 Description: Hide the normal login and activate with a key combination, (upper right) lock icon or (bottom right) "The Net" (Sandra Bullock) style pi symbol.
-Version: 0.5
+Version: 0.5.1
 Author: apexad
 Author URI: http://apexad.net
 License: GPL2
@@ -178,8 +178,9 @@ echo ' /><input type="button" class="'.$button_color.'" value="'.ucwords($button
 					<td>Ctrl/Alt+<input type="text" name="securehiddenlogin[triggerchar]" value="<?php echo $options['triggerchar']; ?>" size="1" maxlength="1" /></td>
 				</tr>
 				<tr><th scope="row">Block wp-login.php</th>
-					<td><input type="checkbox" name="securehiddenlogin[htaccessblock]" <?php if ($options['htaccessblock'] == 'on') { echo 'checked="checked"'; } ?> />
-					<span style="color:red;">Warning:</span> Be sure to disable this option when uninstalling the plugin.</td>
+					<td><?php if (@fopen(ABSPATH.'.htaccess','r')) { ?><input type="checkbox" name="securehiddenlogin[htaccessblock]" <?php if ($options['htaccessblock'] == 'on') { echo 'checked="checked"'; } ?> />
+					<span style="color:red;">Warning:</span> Be sure to disable this option when uninstalling the plugin.
+					<?php } else { echo '.htaccess file not found in directory: '.ABSPATH; }?></td>
 				</tr>
 				<tr><th scope="row">Redirect to Home page on Logout</th>
 					<td><input type="checkbox" name="securehiddenlogin[homepage_on_logout]" <?php if ($options['homepage_on_logout'] == 'on') { echo 'checked="checked"'; } ?> /> </td>
@@ -202,7 +203,7 @@ echo ' /><input type="button" class="'.$button_color.'" value="'.ucwords($button
 
 function remove_htaccess() {
 	//delete from main .htaccess file
-	$main_htaccess = @fopen(ABSPATH.'.htaccess','r') or die("Error: Can't read your .htaccess file (make sure the file exists)");
+	$main_htaccess = @fopen(ABSPATH.'.htaccess','r') or die("Error: Can't read your .htaccess file (make sure the file exists @ ".ABSPATH.".htaccess");
 	$new_main_htacces_contents = "";
 
     	while (($buffer = fgets($main_htaccess, 4096)) !== false) {
@@ -271,12 +272,14 @@ function remove_htaccess() {
 function securehiddenlogin_options_validate($input) {
 	$input['loginbartext'] =  wp_filter_nohtml_kses($input['loginbartext']);
 
-	remove_htaccess(); //first clean up the .htaaccess files
+	//added in v0.5.1, wp-login.php block disabled if no .htaccess file exists
+	if (@fopen(ABSPATH.'.htaccess','r')) {
+		remove_htaccess(); //first clean up the .htaaccess files
 
-	if ($input['htaccessblock'] == 'on') {
-		//write to .htaccess files if they turned that option on
-		$main_domain = $domain = str_ireplace('www.', '', parse_url(home_url(), PHP_URL_HOST));
-		$main_htaccess_content = <<<MAINHTACCESS
+		if ($input['htaccessblock'] == 'on') {
+			//write to .htaccess files if they turned that option on
+			$main_domain = $domain = str_ireplace('www.', '', parse_url(home_url(), PHP_URL_HOST));
+			$main_htaccess_content = <<<MAINHTACCESS
 
 # BEGIN Secure Login
 <FilesMatch "wp-login.php">
@@ -286,9 +289,10 @@ RewriteRule .* - [F]
 </FilesMatch>
 # END Secure Login
 MAINHTACCESS;
-		$main_htaccess = @fopen(ABSPATH.'.htaccess','a+') or die("Errot: Can't write to your .htaccess file (make sure the file is writable)");
-		fwrite($main_htaccess,$main_htaccess_content);
-		fclose($main_htaccess);
+			$main_htaccess = @fopen(ABSPATH.'.htaccess','a+') or die("Errot: Can't write to your .htaccess file (make sure the file is writable)");
+			fwrite($main_htaccess,$main_htaccess_content);
+			fclose($main_htaccess);
+		}
 	}
 	return $input;
 }

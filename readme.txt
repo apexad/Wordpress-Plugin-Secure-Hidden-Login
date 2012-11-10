@@ -4,7 +4,7 @@ Donate link: http://apexad.net/category/wordpress-plugins/
 Tags: secure, hidden, login, single click, lock, the net, sandra bullock
 Requires at least: 3.4
 Tested up to: 3.4.2
-Stable tag: 0.5
+Stable tag: 0.5.1
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -59,6 +59,10 @@ Actually, it does work in Firefox and Chrome. Internet Explorer seems to be the 
 No Screenshots
 
 == Changelog ==
+
+= 0.5.1 =
+
+* Now checks for a valid .htaccess file or does not allow wp-login.php block
 
 = 0.5 =
 
