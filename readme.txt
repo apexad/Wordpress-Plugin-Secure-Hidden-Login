@@ -2,9 +2,9 @@
 Contributors: apexad
 Donate link: http://apexad.net/category/wordpress-plugins/
 Tags: secure, hidden, login, single click, lock, the net, sandra bullock
-Requires at least: 3.4
-Tested up to: 3.4.2
-Stable tag: 0.5.1
+Requires at least: 3.3.2
+Tested up to: 3.5
+Stable tag: 0.6
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -37,10 +37,6 @@ Why you should use this plugin:
 
 == Frequently Asked Questions ==
 
-= When I click the lock it just goes to the wordpress admin login page, why don't I get the login bar? =
-
-Your active theme may have an issue loading jquery.  I'm looking into a better fix for this issue.
-
 = Somehow I've locked myself out of my Wordpress Admin, what do I do? =
 
 You can upload an 'Emergency' Login page: 
@@ -59,6 +55,14 @@ Actually, it does work in Firefox and Chrome. Internet Explorer seems to be the 
 No Screenshots
 
 == Changelog ==
+
+= 0.6 =
+
+* Changed minimum required version to Wordpress 3.3.2 (Tested and Working)
+* Fixed some minor display issues caused by some themes (CSS resets)
+* Option to 'Attempt to create' missing .htaccess file
+* Moved Script Loading to Footer, (fixes jQuery load issues, removed FAQ question)
+* Tested in Wordpress 3.5, No issues
 
 = 0.5.1 =
 

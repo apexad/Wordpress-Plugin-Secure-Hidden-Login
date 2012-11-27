@@ -3,7 +3,7 @@ function show_loginbar() {
 	jQuery('#securehiddenlogin').css({"width":"100%"});
 	jQuery('#securehiddenlogin').css({"height":"28px"});
 	jQuery('#securehiddenlogin').css({"top":"0"});
-	jQuery('#securehiddenlogin').css({"right":"0"});
+	jQuery('#securehiddenlogin').css({"left":"0"});
 	jQuery('#securehiddenlogin').css({"background-color":"#464646"});
 	jQuery('#securehiddenlogin').css({"background-image":"none"});
 	jQuery('#securehiddenlogin').css({"text-align":"center"});

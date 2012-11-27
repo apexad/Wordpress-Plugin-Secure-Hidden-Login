@@ -3,7 +3,7 @@
 Plugin Name: Secure Hidden Login
 Plugin URI: http://apexad.net/category/wordpress-plugins/
 Description: Hide the normal login and activate with a key combination, (upper right) lock icon or (bottom right) "The Net" (Sandra Bullock) style pi symbol.
-Version: 0.5.1
+Version: 0.6
 Author: apexad
 Author URI: http://apexad.net
 License: GPL2
@@ -29,7 +29,8 @@ add_action('wp_footer','securehiddenlogin_footer');
 function securehiddenlogin_css() {
 	wp_register_style('securehiddenlogin_cssfile', plugins_url('style.css',__FILE__ ));
 	wp_enqueue_style('securehiddenlogin_cssfile');
-
+}
+function securehiddenlogin_jscript() {
 	wp_register_script('securehiddenlogin_jsfile', plugins_url('script.js',__FILE__ ));
 	wp_enqueue_script('jquery');
 	wp_enqueue_script('securehiddenlogin_jsfile');
@@ -52,6 +53,9 @@ function securehiddenlogin_css() {
 }
 add_action('wp_enqueue_scripts','securehiddenlogin_css');
 
+//as of 0.6, moved javascript to footer
+add_action('wp_footer','securehiddenlogin_jscript');
+
 function securehiddenlogin_footer() {
 	if (!is_user_logged_in()) {
 		$securehiddenlogin_options = get_option('securehiddenlogin');
@@ -73,7 +77,9 @@ function securehiddenlogin_footer() {
 			case 'hidden':
 				echo 'hidden">';
 		}
+		/* //removed v0.6, script loading moved to footer, should no longer need this
 		echo '<script type="text/javascript">'."if(typeof jQuery == 'undefined') { document.write('".'<a href="/wp-admin/" title="jQuery not enabled">x</a>'."'); }".'</script></div>';
+		*/
 	}
 }
 
@@ -180,7 +186,10 @@ echo ' /><input type="button" class="'.$button_color.'" value="'.ucwords($button
 				<tr><th scope="row">Block wp-login.php</th>
 					<td><?php if (@fopen(ABSPATH.'.htaccess','r')) { ?><input type="checkbox" name="securehiddenlogin[htaccessblock]" <?php if ($options['htaccessblock'] == 'on') { echo 'checked="checked"'; } ?> />
 					<span style="color:red;">Warning:</span> Be sure to disable this option when uninstalling the plugin.
-					<?php } else { echo '.htaccess file not found in directory: '.ABSPATH; }?></td>
+					<?php } else { 
+							echo '.htaccess file not found in directory: '.ABSPATH; ?>
+							<br/><input type="checkbox" name="securehiddenlogin[make-htaccess]" /> Attempt to make it.
+					<?php }?></td>
 				</tr>
 				<tr><th scope="row">Redirect to Home page on Logout</th>
 					<td><input type="checkbox" name="securehiddenlogin[homepage_on_logout]" <?php if ($options['homepage_on_logout'] == 'on') { echo 'checked="checked"'; } ?> /> </td>
@@ -275,11 +284,11 @@ function securehiddenlogin_options_validate($input) {
 	//added in v0.5.1, wp-login.php block disabled if no .htaccess file exists
 	if (@fopen(ABSPATH.'.htaccess','r')) {
 		remove_htaccess(); //first clean up the .htaaccess files
-
-		if ($input['htaccessblock'] == 'on') {
-			//write to .htaccess files if they turned that option on
-			$main_domain = $domain = str_ireplace('www.', '', parse_url(home_url(), PHP_URL_HOST));
-			$main_htaccess_content = <<<MAINHTACCESS
+	}
+	if ($input['htaccessblock'] == 'on' || $input['make-htaccess'] == 'on') {
+		//write to .htaccess files if they turned that option on
+		$main_domain = $domain = str_ireplace('www.', '', parse_url(home_url(), PHP_URL_HOST));
+		$main_htaccess_content = <<<MAINHTACCESS
 
 # BEGIN Secure Login
 <FilesMatch "wp-login.php">
@@ -289,10 +298,15 @@ RewriteRule .* - [F]
 </FilesMatch>
 # END Secure Login
 MAINHTACCESS;
-			$main_htaccess = @fopen(ABSPATH.'.htaccess','a+') or die("Errot: Can't write to your .htaccess file (make sure the file is writable)");
-			fwrite($main_htaccess,$main_htaccess_content);
-			fclose($main_htaccess);
+		if ($input['make-htaccess'] == 'on') {
+			$main_htaccess = @fopen(ABSPATH.'.htaccess','w+') or die("Error: Can't write to your .htaccess file (make sure the file is writable)");
 		}
+		else {
+			$main_htaccess = @fopen(ABSPATH.'.htaccess','a+') or die("Error: Can't write to your .htaccess file (make sure the file is writable)");
+		}
+		fwrite($main_htaccess,$main_htaccess_content);
+		fclose($main_htaccess);
+		$input[htaccessblock] = 'on';
 	}
 	return $input;
 }
