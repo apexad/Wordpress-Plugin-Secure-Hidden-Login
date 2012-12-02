@@ -4,7 +4,7 @@ Donate link: http://apexad.net/category/wordpress-plugins/
 Tags: secure, hidden, login, single click, lock, the net, sandra bullock
 Requires at least: 3.3.2
 Tested up to: 3.5
-Stable tag: 0.6
+Stable tag: 0.7
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -19,6 +19,7 @@ Secure Hidden Login allows you to have hidden a login bar (same size as the defa
 * Activate by clicking on a simple 'LOGIN' button at the top of the page
 * Activate by clicking the 'Wordpress' Logo in the upper left (just like on the admin bar)
 * Completely Hidden and only activated with Ctrl/Alt+L (the 'L' can be changed in Settings)
+* NEW: Activate with a simple link n a widget that can be placed anywhere
 
 Why you should use this plugin:
 
@@ -52,9 +53,13 @@ Actually, it does work in Firefox and Chrome. Internet Explorer seems to be the 
 
 == Screenshots ==
 
-No Screenshots
+Screenshots coming soon!
 
 == Changelog ==
+
+= 0.7 =
+
+* Added a Widget so a 'Login' Link can be placed anywhere (Title and Link Text can be customized)
 
 = 0.6 =
 

@@ -3,7 +3,7 @@
 Plugin Name: Secure Hidden Login
 Plugin URI: http://apexad.net/category/wordpress-plugins/
 Description: Hide the normal login and activate with a key combination, (upper right) lock icon or (bottom right) "The Net" (Sandra Bullock) style pi symbol.
-Version: 0.6
+Version: 0.7
 Author: apexad
 Author URI: http://apexad.net
 License: GPL2
@@ -324,4 +324,7 @@ function securehiddenlogin_logoutredirect() {
 	}
 }
 add_action( 'login_enqueue_scripts', 'securehiddenlogin_logoutredirect' );
+
+//include the Secure Hidden Login Widget
+include("securehiddenlogin.widget.php");
 ?>
