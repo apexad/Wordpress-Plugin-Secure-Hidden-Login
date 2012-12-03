@@ -26,7 +26,7 @@ class SecureHiddenLogin_Widget extends WP_Widget {
 	 */
 	function SecureHiddenLogin_Widget() {
 		/* Widget settings. */
-		$widget_ops = array( 'classname' => 'securehiddenlogin', 'description' => __('An securehiddenlogin widget that displays a person\'s name and sex.', 'securehiddenlogin') );
+		$widget_ops = array( 'classname' => 'securehiddenlogin', 'description' => __('A widget that provides a Link (with custom text) to activate the Secure Hidden Login bar', 'securehiddenlogin') );
 
 		/* Widget control settings. */
 		$control_ops = array( 'width' => 300, 'height' => 350, 'id_base' => 'securehiddenlogin-widget' );
