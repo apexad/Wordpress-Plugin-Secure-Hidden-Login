@@ -59,7 +59,7 @@ You can upload an 'Emergency' Login page:
 * Forgot Password integrated (no longer goes to the Forgot Password page with a valid entry)
 * Forgot Password success message is displayed with new CSS
 * Fixed 'Dashboard' button in iPhone/Android Wordpress Apps not working (when block wp-login.php is on)
-* Fixed missing '</div>' introduced in 0.6 when I removed jQuery check
+* Fixed missing '&lt;/div&gt;' introduced in 0.6 when I removed jQuery check
 * Added specific css for labels inside of the text box
 * Settings Page: Moved donation button to the top of Settings, please consider donating!
 * Settings Page: Changed 'Display Style' to a Select Box/Dropdown
