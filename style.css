@@ -83,6 +83,7 @@ img#wpstats { display:none; } /* fix conflict with 'the net' style and jetpack *
 #securehiddenloginform label {
 	line-height:1 !important;
 	display: inline;
+	color: #707070;
 }
 #securehiddenloginform input[type=submit]:hover, #securehiddenloginform input[type=button]:hover {
 	text-decoration: none;
@@ -313,4 +314,15 @@ http://www.webdesignerwall.com/demo/css-buttons.html
 	background: -webkit-gradient(linear, left top, left bottom, from(#FFFF99), to(#fff));
 	background: -moz-linear-gradient(top,  #FFFF99,  #fff);
 	filter:  progid:DXImageTransform.Microsoft.gradient(startColorstr='#FFFF99', endColorstr='#ffffff');
+}
+
+.forgotpasswordsuccess {
+	position:fixed;
+	top:0;
+	background-color:#F2FFDB;
+	color:#151515;
+	font-size:14px !important;
+	border:1px solid #9C6;
+	margin:10px 0px;padding:5px;
+	z-index: 7777777;
 }

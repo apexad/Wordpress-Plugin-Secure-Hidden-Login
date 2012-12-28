@@ -4,11 +4,11 @@ Donate link: http://apexad.net/category/wordpress-plugins/
 Tags: secure, hidden, login, single click, lock, the net, sandra bullock
 Requires at least: 3.3.2
 Tested up to: 3.5
-Stable tag: 0.7
+Stable tag: 0.8
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
-Secure Hidden Login allows you to login wih a key combination or special button (in the same area taken up by the admin bar) instead of wp-login.php
+Secure Hidden Login hides the normal login and allows you to login wih a key combination or special button (in the same area taken up by the admin bar)
 
 == Description == 
 
@@ -46,16 +46,26 @@ You can upload an 'Emergency' Login page:
 &lt;body&gt;&lt;a href="./wp-admin"&gt;Admin Page&lt;/a&gt;&lt;/body&gt;
 &lt;/html&gt;
 
-= Why does the 'Forgot Password' button does not work after blocking wp-login.php? =
-
-Actually, it does work in Firefox and Chrome. Internet Explorer seems to be the only browser affefected by this issue. You can use the Emergency Login Page Code above.
-
-
 == Screenshots ==
 
-Screenshots coming soon!
+1. A Screenshot of the different ways to activate the Login bar
+2. A Screenshot of the Settings screen
 
 == Changelog ==
+
+= 0.8 =
+
+* Re-branded as part of the 'EditSee' plugin suite
+* Forgot Password integrated (no longer goes to the Forgot Password page with a valid entry)
+* Forgot Password success message is displayed with new CSS
+* Fixed 'Dashboard' button in iPhone/Android Wordpress Apps not working (when block wp-login.php is on)
+* Fixed missing '</div>' introduced in 0.6 when I removed jQuery check
+* Added specific css for labels inside of the text box
+* Settings Page: Moved donation button to the top of Settings, please consider donating!
+* Settings Page: Changed 'Display Style' to a Select Box/Dropdown
+* Settings Page: Moved 'Button Color' options to the bottom (all other options moved up)
+* Settings Page: Renamed 'Save Changes' button to 'Update Secure Hidden Login Settings'
+* Settings Page: Corrected some wording
 
 = 0.7 =
 
