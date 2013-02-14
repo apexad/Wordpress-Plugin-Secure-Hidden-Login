@@ -8,6 +8,13 @@
 	cursor:pointer;
 	line-height:1 !important;
 }
+#securehiddenlogin form {
+	display:inline;
+}
+#securehiddenlogin a {
+	position:absolute;
+	right:0
+}
 #securehiddenlogin.editsee,#securehiddenlogin.wordpress_icon {
 	width:32px;
 }

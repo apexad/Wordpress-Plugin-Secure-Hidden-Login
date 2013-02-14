@@ -3,7 +3,7 @@
 Plugin Name: Secure Hidden Login
 Plugin URI: http://apexad.net/category/wordpress-plugins/
 Description: Hides the normal login and allows you to login wih a key combination or special button (in the same area taken up by the admin bar)
-Version: 0.8
+Version: 0.9
 Author: apexad
 Author URI: http://apexad.net
 License: GPL2
@@ -42,9 +42,17 @@ function securehiddenlogin_jscript() {
 		$options['button_colorfp'] = 'green';
 	}
 	if (ord(strtolower($options['triggerchar'])) == 0) { $options['triggerchar']='l'; /* set default value*/ }
+		$register_link = '';
+		if ($options['register_link'] == 'on') {
+			ob_start();
+			wp_register('','');
+			$register_link = ob_get_contents();
+			ob_end_clean();
+		}
 	$js_data = array(
 		'site_url' => site_url(),
 		'home_url' => home_url(),
+		'wp_register' => ($register_link != '' ? $register_link : ''),
 		'login_keys' => '['.ord(strtolower($options['triggerchar'])).']['.ord(strtoupper($options['triggerchar'])).']',
 		'colorli' => $options['button_color'],
 		'colorfp' => $options['button_colorfp']
@@ -81,7 +89,8 @@ function securehiddenlogin_footer() {
 		echo '<script type="text/javascript">'."if(typeof jQuery == 'undefined') { document.write('".'<a href="/wp-admin/" title="jQuery not enabled">x</a>'."'); }".'</script>';
 		*/
 		echo '</div>';
-		if ($_GET['forgotpassword'] == 'success') {
+		if (array_key_exists('forgotpassword',$_GET)) {
+			if ($_GET['forgotpassword'] == 'success') {
 ?>
 <script type="text/javascript">
 setTimeout(function(){
@@ -94,11 +103,10 @@ setTimeout(function(){
 <strong>Check your e-mail for a link to reset your password.</strong>
 </div>
 <?php
-			
-		}
-
-	}
-}
+			} //end if ($_GET['forgotpassword'] == 'success') {
+		} //end if (array_key_exists('forgotpassword',$_GET))
+	} //end if (!is_user_logged_in())
+} //end function securehiddenlogin_footer()
 
 /* Add Options Page */
 add_action('admin_init', 'securehiddenlogin_options_init' );
@@ -172,7 +180,7 @@ $button_color_values = array(
 					<td><select name="securehiddenlogin[display_style]">
 <?php foreach($display_style_values as $display_style) {
 echo '<option value="'.$display_style['value'].'"';
-if ($options[display_style] == $display_style['value']) {
+if ($options['display_style'] == $display_style['value']) {
 	echo ' selected="selected"';
 }
 echo '>'.$display_style['label'].'</option>';
@@ -185,8 +193,10 @@ echo '>'.$display_style['label'].'</option>';
 					<td>Ctrl/Alt+<input type="text" name="securehiddenlogin[triggerchar]" value="<?php echo $options['triggerchar']; ?>" size="1" maxlength="1" /> If &acute;Hidden&acute; is selected, make sure to remember this letter!</td>
 				</tr>
 				<tr><td scope="row">Block wp-login.php</td>
-					<td><?php if (@fopen(ABSPATH.'.htaccess','r')) { ?><input type="checkbox" name="securehiddenlogin[htaccessblock]" <?php if ($options['htaccessblock'] == 'on') { echo 'checked="checked"'; } ?> />
+					<td><?php if (@fopen(ABSPATH.'.htaccess','r')) { ?>
+					<input type="checkbox" name="securehiddenlogin[htaccessblock]" <?php if ($options['htaccessblock'] == 'on') { echo 'checked="checked"'; } ?> />
 					<span style="color:red;">Warning:</span> Disable this option when uninstalling the plugin.
+					<input type="hidden" name="securehiddenlogin[make-htaccess]" value="off" />
 					<?php } else { 
 							echo '.htaccess file not found in directory: '.ABSPATH; ?>
 							<br/><input type="checkbox" name="securehiddenlogin[make-htaccess]" /> Attempt to make it.
@@ -195,6 +205,16 @@ echo '>'.$display_style['label'].'</option>';
 				<tr><td scope="row">Redirect to Home page on Logout</td>
 					<td><input type="checkbox" name="securehiddenlogin[homepage_on_logout]" <?php if ($options['homepage_on_logout'] == 'on') { echo 'checked="checked"'; } ?> /> </td>
 				</tr>
+<?php
+if (get_option('users_can_register') == 1) {
+?>
+				<tr><td scope="row">Show 'Register' Link on login bar</td>
+					<td><input type="checkbox" name="securehiddenlogin[register_link]" <?php if ($options['register_link'] == 'on') { echo 'checked="checked"'; } ?> /> </td>
+				</tr>
+<?php
+}
+else { echo '<input type="hidden" name="securehiddenlogin[register_link]" />'; }
+?>
 				<tr valign="top"><td scope="row">Button Color</td>
 					<td>
 <style type="text/css">
@@ -232,7 +252,10 @@ echo ' /><input type="button" class="'.$button_color.'" value="'.ucwords($button
 function remove_htaccess() {
 	//delete from main .htaccess file
 	$main_htaccess = @fopen(ABSPATH.'.htaccess','r') or die("Error: Can't read your .htaccess file (make sure the file exists @ ".ABSPATH.".htaccess");
-	$new_main_htacces_contents = "";
+
+	$new_main_htaccess_contents = '';
+	$remove_line = false;
+	$previous_buffer = '';
 
     	while (($buffer = fgets($main_htaccess, 4096)) !== false) {
 		if (substr($buffer,0,20) == "# BEGIN Secure Login") {
@@ -298,8 +321,6 @@ function remove_htaccess() {
 
 // Sanitize and validate input. Accepts an array, return a sanitized array.
 function securehiddenlogin_options_validate($input) {
-	$input['loginbartext'] =  wp_filter_nohtml_kses($input['loginbartext']);
-
 	//added in v0.5.1, wp-login.php block disabled if no .htaccess file exists
 	if (@fopen(ABSPATH.'.htaccess','r')) {
 		remove_htaccess(); //first clean up the .htaaccess files
@@ -327,7 +348,7 @@ MAINHTACCESS;
 		}
 		fwrite($main_htaccess,$main_htaccess_content);
 		fclose($main_htaccess);
-		$input[htaccessblock] = 'on';
+		$input['htaccessblock'] = 'on';
 	}
 	return $input;
 }
@@ -340,7 +361,7 @@ register_deactivation_hook(__FILE__, 'securehiddenlogin_deactivation');
 
 function securehiddenlogin_logoutredirect() { 
 	$options = get_option('securehiddenlogin');
-	if (($_REQUEST['loggedout'] == 'true') && ($options['homepage_on_logout'] == 'on')) {
+	if (array_key_exists('loggedout',$_REQUEST) && ($options['homepage_on_logout'] == 'on')) {
 		echo '<script type="text/javascript"> location.href="'.home_url().'"; </script>';
 	}
 }
