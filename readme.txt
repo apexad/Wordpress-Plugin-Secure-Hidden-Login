@@ -1,10 +1,10 @@
 === Secure Hidden Login ===
 Contributors: apexad
-Donate link: http://apexad.net/category/wordpress-plugins/
+Donate link: http://apexad.net/secure-hidden-login/
 Tags: secure, hidden, login, single click, lock, the net, sandra bullock
 Requires at least: 3.3.2
 Tested up to: 3.5.1
-Stable tag: 0.9
+Stable tag: 0.9.1
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -52,6 +52,10 @@ You can upload an 'Emergency' Login page:
 2. A Screenshot of the Settings screen (on a site with User Registraion disabled)
 
 == Changelog ==
+
+= 0.9.1 =
+
+* Renamed some CSS classes to prevent conflict with other plugins (like Sidebar Login)
 
 = 0.9 =
 

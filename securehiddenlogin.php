@@ -1,9 +1,9 @@
 <?php
 /*
 Plugin Name: Secure Hidden Login
-Plugin URI: http://apexad.net/category/wordpress-plugins/
+Plugin URI: http://apexad.net/secure-hidden-login/
 Description: Hides the normal login and allows you to login wih a key combination or special button (in the same area taken up by the admin bar)
-Version: 0.9
+Version: 0.9.1
 Author: apexad
 Author URI: http://apexad.net
 License: GPL2
@@ -74,13 +74,13 @@ function securehiddenlogin_footer() {
 				echo 'editsee">';
 			break;
 			case 'wordpress_icon':
-				echo 'wordpress_icon"><div class="icon"></div>';
+				echo 'shl_wordpress_icon"><div class="icon"></div>';
 			break;
 			case 'the_net':
 				echo 'the_net">&pi;';
 			break;
 			case 'login_text':
-				echo 'login_text">&nbsp;&nbsp;LOGIN&nbsp;&nbsp;';
+				echo 'shl_login_text">&nbsp;&nbsp;LOGIN&nbsp;&nbsp;';
 			break;
 			case 'hidden':
 				echo 'hidden">';

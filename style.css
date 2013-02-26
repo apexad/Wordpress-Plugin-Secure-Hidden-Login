@@ -15,22 +15,22 @@
 	position:absolute;
 	right:0
 }
-#securehiddenlogin.editsee,#securehiddenlogin.wordpress_icon {
+#securehiddenlogin.editsee,#securehiddenlogin.shl_wordpress_icon {
 	width:32px;
 }
-#securehiddenlogin.editsee,#securehiddenlogin.login_text,#securehiddenlogin.wordpress_icon {
+#securehiddenlogin.editsee,#securehiddenlogin.shl_login_text,#securehiddenlogin.shl_wordpress_icon {
 	top:0;
 }
-#securehiddenlogin.login_text, #securehiddenlogin.the_net {
+#securehiddenlogin.shl_login_text, #securehiddenlogin.the_net {
 	right:20px;
 }
-#securehiddenlogin.wordpress_icon {
+#securehiddenlogin.shl_wordpress_icon {
 	left: 0;
 	height:28px;
 	padding-left:12px;
 	border-right:1px solid #555;
 }
-#securehiddenlogin.wordpress_icon .icon {
+#securehiddenlogin.shl_wordpress_icon .icon {
 	background-image: url(../../../wp-includes/images/admin-bar-sprite.png?d=20111130);
 	background-position: 0 -76px;
 	background-repeat: no-repeat;
@@ -45,7 +45,7 @@
 	height:32px;
 	color:black;
 }
-#securehiddenlogin.login_text,#securehiddenlogin.wordpress_icon {
+#securehiddenlogin.shl_login_text,#securehiddenlogin.shl_wordpress_icon {
 	background-image:none !important;
 }
 img#wpstats { display:none; } /* fix conflict with 'the net' style and jetpack */
