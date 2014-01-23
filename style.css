@@ -87,11 +87,6 @@ img#wpstats { display:none; } /* fix conflict with 'the net' style and jetpack *
 	line-height:1 !important;
 	margin:0px 2px 0px 2px;
 }
-#securehiddenloginform label {
-	line-height:1 !important;
-	display: inline;
-	color: #707070;
-}
 #securehiddenloginform input[type=submit]:hover, #securehiddenloginform input[type=button]:hover {
 	text-decoration: none;
 }

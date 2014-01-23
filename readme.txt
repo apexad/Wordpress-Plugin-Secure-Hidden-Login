@@ -3,8 +3,8 @@ Contributors: apexad
 Donate link: http://apexad.net/secure-hidden-login/
 Tags: secure, hidden, login, single click, lock, the net, sandra bullock
 Requires at least: 3.3.2
-Tested up to: 3.5.1
-Stable tag: 0.9.1
+Tested up to: 3.8
+Stable tag: 1.0.0
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -40,11 +40,31 @@ Why you should use this plugin:
 
 = Somehow I've locked myself out of my Wordpress Admin, what do I do? =
 
+There are several solutions to this issue.
+
+The Best:
 You can upload an 'Emergency' Login page: 
 &lt;html&gt;
 &lt;head&gt;&lt;title&gt;Emergency Login&lt;/title&gt;&lt;/head&gt;
 &lt;body&gt;&lt;a href="./wp-admin"&gt;Admin Page&lt;/a&gt;&lt;/body&gt;
 &lt;/html&gt;
+
+Remove Secure Hidden Login Admin Block:
+Look in your Wordpress directory and wp-admin directory and edit the .htaccess files
+Remove the Secure Hidden Login section including # BEGIN Secure Login to # END Secure Login
+
+Try the Default Hidden Mode KeyCode:
+Hit Ctrl+L
+
+= Can I change the background color or other styles (CSS)? =
+
+Yes! Check the plugin directory for style.css!
+Note: You should override these styles in a 'Custom CSS' section as style.css will be overwritten if the plugin is updated.
+
+= Does Secure Hidden Login have a Human Test/CAPTCHA? =
+
+No, I hope to integrate one into a future release though.
+However, Secure Hidden Login will fail gracefully if you used with SI Captcha'.
 
 == Screenshots ==
 
@@ -52,6 +72,21 @@ You can upload an 'Emergency' Login page:
 2. A Screenshot of the Settings screen (on a site with User Registraion disabled)
 
 == Changelog ==
+
+= 1.0.0 =
+
+* Info: Tested and updated for Wordpress 3.8
+* New: Added a Filter to allow different 'Forgot Password' success test
+* New: Added a Filter to allow a different 'LOGIN' text word
+* Fix: Login bar form is now generated server side and added via ajax
+* Fix: Forgot Password form is also generated server side
+* Fix: Using placeholders instead of labels+css for input boxes (should correct alignment issues)
+* Fix: Unable to deactivate Plugin bug due to missing .htaccess
+* Fix: For Security, CSS file and Javascript now directly included in source code (script.js removed)
+* Info: WP Scan Passive plugin enumerating will no longer find Secure Hidden Login
+* Info: Added much more detail to the 'what do if locked out' FAQ question
+* Info: FAQ Question to change styles added back
+* Info: Human Test/CAPTCHA planned for next release (v1.1.0)
 
 = 0.9.1 =
 

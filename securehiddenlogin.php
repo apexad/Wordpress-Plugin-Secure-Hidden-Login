@@ -3,13 +3,13 @@
 Plugin Name: Secure Hidden Login
 Plugin URI: http://apexad.net/secure-hidden-login/
 Description: Hides the normal login and allows you to login wih a key combination or special button (in the same area taken up by the admin bar)
-Version: 0.9.1
+Version: 1.0.0
 Author: apexad
 Author URI: http://apexad.net
 License: GPL2
 */
 
-/*  Copyright 2012  apexad  (email : alex@apexad.net)
+/*  Copyright 2012-14  apexad  (email : alex@apexad.net)
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License, version 2, as 
@@ -26,43 +26,62 @@ License: GPL2
 */
 
 add_action('wp_footer','securehiddenlogin_footer');
-function securehiddenlogin_css() {
-	wp_register_style('securehiddenlogin_cssfile', plugins_url('style.css',__FILE__ ));
-	wp_enqueue_style('securehiddenlogin_cssfile');
-}
-function securehiddenlogin_jscript() {
-	wp_register_script('securehiddenlogin_jsfile', plugins_url('script.js',__FILE__ ));
-	wp_enqueue_script('jquery');
-	wp_enqueue_script('securehiddenlogin_jsfile');
-	$options = get_option('securehiddenlogin');
-	if (!@array_key_exists('button_color',$options)) { 
-		$options['button_color'] = 'green';
-	}
-	if (!@array_key_exists('button_colorfp',$options)) { 
-		$options['button_colorfp'] = 'green';
-	}
-	if (ord(strtolower($options['triggerchar'])) == 0) { $options['triggerchar']='l'; /* set default value*/ }
-		$register_link = '';
-		if ($options['register_link'] == 'on') {
-			ob_start();
-			wp_register('','');
-			$register_link = ob_get_contents();
-			ob_end_clean();
-		}
-	$js_data = array(
-		'site_url' => site_url(),
-		'home_url' => home_url(),
-		'wp_register' => ($register_link != '' ? $register_link : ''),
-		'login_keys' => '['.ord(strtolower($options['triggerchar'])).']['.ord(strtoupper($options['triggerchar'])).']',
-		'colorli' => $options['button_color'],
-		'colorfp' => $options['button_colorfp']
-);
-	wp_localize_script('securehiddenlogin_jsfile','wordpress_info',$js_data);
-}
-add_action('wp_enqueue_scripts','securehiddenlogin_css');
 
-//as of 0.6, moved javascript to footer
-add_action('wp_footer','securehiddenlogin_jscript');
+function securehiddenlogin_styles_and_script() { 
+	$options = get_option('securehiddenlogin');
+	if (ord(strtolower($options['triggerchar'])) == 0) { $options['triggerchar']='l'; /* set default value*/ }
+?>
+<style type="text/css">
+<?php include('style.css'); ?>
+</style>
+<script type="text/javascript">
+function show_loginbar() {
+	jQuery('#securehiddenlogin').css({"display":"block"});
+	jQuery('#securehiddenlogin').css({"width":"100%"});
+	jQuery('#securehiddenlogin').css({"height":"28px"});
+	jQuery('#securehiddenlogin').css({"top":"0"});
+	jQuery('#securehiddenlogin').css({"left":"0"});
+	jQuery('#securehiddenlogin').css({"background-color":"#464646"});
+	jQuery('#securehiddenlogin').css({"background-image":"none"});
+	jQuery('#securehiddenlogin').css({"text-align":"center"});
+	jQuery('#securehiddenlogin').css({"color":"#ccc"});
+	jQuery.post('<?=admin_url('admin-ajax.php')?>', { 'action': 'securehiddenlogin_loginbar_ajax' },
+		function(response_securehiddenlogin_loginbar_function){
+			jQuery("#securehiddenlogin").html(response_securehiddenlogin_loginbar_function);
+		}
+	);
+		jQuery('#securehiddenlogin').off('click');
+		jQuery('#user_login').focus();
+}
+function forgot_password() {
+	jQuery.post('<?=admin_url('admin-ajax.php')?>', { 'action': 'securehiddenlogin_forgotpassword_ajax' },
+		function(response_securehiddenlogin_forgotpassword_function){
+			jQuery("#securehiddenlogin").html(response_securehiddenlogin_forgotpassword_function);
+		}
+	);
+}
+jQuery(function() {
+	jQuery('#securehiddenlogin').click( function() {
+		show_loginbar();
+	});
+});
+
+jQuery(document).keydown(function(e) {
+	var key = e.charCode ? e.charCode : e.keyCode ? e.keyCode : 0;
+	key = "["+key+"]";
+	slkey = '<?php echo '['.ord(strtolower($options['triggerchar'])).']['.ord(strtoupper($options['triggerchar'])).']'; ?>';
+	slauxkey = e.altKey || e.ctrlKey;
+	slkey.indexOf(key) != -1 ? keye = true : keye = false;
+	if (keye && slauxkey) {
+		show_loginbar();
+		return false;
+	};
+});
+</script>
+<?php
+}
+
+add_action('wp_footer','securehiddenlogin_styles_and_script');
 
 function securehiddenlogin_footer() {
 	if (!is_user_logged_in()) {
@@ -80,14 +99,11 @@ function securehiddenlogin_footer() {
 				echo 'the_net">&pi;';
 			break;
 			case 'login_text':
-				echo 'shl_login_text">&nbsp;&nbsp;LOGIN&nbsp;&nbsp;';
+				echo 'shl_login_text">&nbsp;&nbsp;'.apply_filters('securehiddenlogin_logintext','LOGIN').'&nbsp;&nbsp;';
 			break;
 			case 'hidden':
 				echo 'hidden">';
 		}
-		/* //removed v0.6, script loading moved to footer, should no longer need this
-		echo '<script type="text/javascript">'."if(typeof jQuery == 'undefined') { document.write('".'<a href="/wp-admin/" title="jQuery not enabled">x</a>'."'); }".'</script>';
-		*/
 		echo '</div>';
 		if (array_key_exists('forgotpassword',$_GET)) {
 			if ($_GET['forgotpassword'] == 'success') {
@@ -100,7 +116,7 @@ setTimeout(function(){
 }, 4000);
 </script>
 <div class="forgotpasswordsuccess">
-<strong>Check your e-mail for a link to reset your password.</strong>
+<?php echo apply_filters('securehiddenlogin_forgotpasswordsuccess','<strong>Check your e-mail for a link to reset your password.</strong>'); ?>
 </div>
 <?php
 			} //end if ($_GET['forgotpassword'] == 'success') {
@@ -252,7 +268,6 @@ echo ' /><input type="button" class="'.$button_color.'" value="'.ucwords($button
 function remove_htaccess() {
 	//delete from main .htaccess file
 	$main_htaccess = @fopen(ABSPATH.'.htaccess','r') or die("Error: Can't read your .htaccess file (make sure the file exists @ ".ABSPATH.".htaccess");
-
 	$new_main_htaccess_contents = '';
 	$remove_line = false;
 	$previous_buffer = '';
@@ -279,7 +294,7 @@ function remove_htaccess() {
 	}
 	fclose($main_htaccess);
 
-	$main_htaccess = @fopen(ABSPATH.'.htaccess','w+') or die("Error: Can't read your .htaccess file (make sure the file exists)");
+	$main_htaccess = @fopen(ABSPATH.'.htaccess','w+') or die("Error: Can't write to your .htaccess file (make sure the file exists)");
 	fwrite($main_htaccess,trim($new_main_htaccess_contents));
 	fclose($main_htaccess);
 
@@ -354,7 +369,9 @@ MAINHTACCESS;
 }
 
 function securehiddenlogin_deactivation() {
-	remove_htaccess();
+	if (@fopen(ABSPATH.'.htaccess','r') !== false) {
+		remove_htaccess();
+	}
 }
 
 register_deactivation_hook(__FILE__, 'securehiddenlogin_deactivation');
@@ -369,4 +386,6 @@ add_action( 'login_enqueue_scripts', 'securehiddenlogin_logoutredirect' );
 
 //include the Secure Hidden Login Widget
 include("securehiddenlogin.widget.php");
+//include Secure Hidden Login Ajax functions
+include("securehiddenlogin.ajax.php");
 ?>
