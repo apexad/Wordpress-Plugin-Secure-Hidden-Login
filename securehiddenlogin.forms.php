@@ -18,7 +18,7 @@ if ($options['register_link'] == 'on') {
 }
 if ($securehiddenlogin_form_display == 'loginbar') {
 ?>
-<form name="loginform" id="securehiddenloginform" action="<?=admin_url()?>" method="post">
+<form name="loginform" id="securehiddenloginform" action="<?=site_url('wp-login.php')?>" method="post">
 
 <input type="text" name="log" id="user_login" size="25" placeholder="Username" />
 <input type="password" name="pwd" id="user_pass" size="25" placeholder="Password" />

@@ -4,7 +4,7 @@ Donate link: http://apexad.net/secure-hidden-login/
 Tags: secure, hidden, login, single click, lock, the net, sandra bullock
 Requires at least: 3.3.2
 Tested up to: 3.8
-Stable tag: 1.0.0
+Stable tag: 1.0.1
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -72,6 +72,12 @@ However, Secure Hidden Login will fail gracefully if you used with SI Captcha'.
 2. A Screenshot of the Settings screen (on a site with User Registraion disabled)
 
 == Changelog ==
+
+= 1.0.1 =
+
+* Fix: Left Side Wordpress Icon shows up again (in old Wordpress versions and 3.8)
+* Info: Wordpress Icon uses 'dashicon' in Wordpress 3.8 so it looks a bit different
+* Fix: Username/Password submit form moved to wp-login.php
 
 = 1.0.0 =
 

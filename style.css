@@ -31,12 +31,16 @@
 	border-right:1px solid #555;
 }
 #securehiddenlogin.shl_wordpress_icon .icon {
-	background-image: url(../../../wp-includes/images/admin-bar-sprite.png?d=20111130);
+	background-image: url(wp-includes/images/admin-bar-sprite.png?d=20111130);
 	background-position: 0 -76px;
 	background-repeat: no-repeat;
 	width:20px;
 	height:20px;
 	margin-top:4px;
+}
+#securehiddenlogin.shl_wordpress_icon .dashicon:before {
+font-family: "dashicons";
+    content: "\f324";
 }
 #securehiddenlogin.the_net {
 	bottom:0;
