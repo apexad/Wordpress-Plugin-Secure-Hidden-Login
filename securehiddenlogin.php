@@ -3,7 +3,7 @@
 Plugin Name: Secure Hidden Login
 Plugin URI: http://apexad.net/secure-hidden-login/
 Description: Hides the normal login and allows you to login wih a key combination or special button (in the same area taken up by the admin bar)
-Version: 1.0.1
+Version: 1.0.2
 Author: apexad
 Author URI: http://apexad.net
 License: GPL2
@@ -354,6 +354,7 @@ function securehiddenlogin_options_validate($input) {
 RewriteEngine On
 RewriteCond %{HTTP_USER_AGENT} !^.*wp-iphone.*$
 RewriteCond %{HTTP_USER_AGENT} !^.*wp-android.*$
+RewriteCond %{QUERY_STRING} !^action=rp&key=.*$
 RewriteCond %{HTTP_REFERER} !^http(s)?://(www.)?$main_domain [NC]
 RewriteRule .* - [F]
 </FilesMatch>
