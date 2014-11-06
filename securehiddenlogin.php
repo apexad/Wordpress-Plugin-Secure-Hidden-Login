@@ -31,9 +31,13 @@ function securehiddenlogin_styles_and_script() {
 	wp_enqueue_style( 'dashicons' ); //load dashicons in wordpress 3.8
 	$options = get_option('securehiddenlogin');
 	if (ord(strtolower($options['triggerchar'])) == 0) { $options['triggerchar']='l'; /* set default value*/ }
+
+function securehiddenlogin_styles($buffer) {
+  return (str_replace("lock.png", plugins_url( 'lock.png', __FILE__ ), $buffer));
+}
 ?>
 <style type="text/css">
-<?php include('style.css'); ?>
+<?php ob_start("securehiddenlogin_styles"); include('style.css'); ob_end_flush(); ?>
 </style>
 <script type="text/javascript">
 function show_loginbar() {

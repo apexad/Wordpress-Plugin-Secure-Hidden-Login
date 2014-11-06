@@ -3,8 +3,8 @@ Contributors: apexad
 Donate link: http://apexad.net/secure-hidden-login/
 Tags: secure, hidden, login, single click, lock, the net, sandra bullock
 Requires at least: 3.3.2
-Tested up to: 3.9.1
-Stable tag: 1.0.2
+Tested up to: 4.0
+Stable tag: 1.0.3
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -72,6 +72,11 @@ However, Secure Hidden Login will fail gracefully if you used with SI Captcha'.
 2. A Screenshot of the Settings screen (on a site with User Registraion disabled)
 
 == Changelog ==
+
+= 1.0.3 =
+
+* Fix: Right Side Lock Icon works again
+* Info: Now tested up to Wordpress 4.0
 
 = 1.0.2 =
 
